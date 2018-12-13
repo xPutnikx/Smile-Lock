@@ -11,6 +11,7 @@ import LocalAuthentication
 public protocol PasswordInputCompleteProtocol: class {
     func passwordInputComplete(_ passwordContainerView: PasswordContainerView, input: String)
     func touchAuthenticationComplete(_ passwordContainerView: PasswordContainerView, success: Bool, error: Error?)
+    func cancelPressed()
 }
 
 open class PasswordContainerView: UIView {
@@ -22,9 +23,11 @@ open class PasswordContainerView: UIView {
     @IBOutlet open weak var touchAuthenticationButton: UIButton!
     
     //MARK: Property
-    open var deleteButtonLocalizedTitle: String = "" {
+    open var deleteButtonLocalizedTitle: String = ""
+    
+    open var cancelButtonLocalizedTitle: String = "" {
         didSet {
-            deleteButton.setTitle(NSLocalizedString(deleteButtonLocalizedTitle, comment: ""), for: .normal)
+            deleteButton.setTitle(NSLocalizedString(cancelButtonLocalizedTitle, comment: ""), for: .normal)
         }
     }
     
@@ -164,10 +167,15 @@ open class PasswordContainerView: UIView {
     
     open func clearInput() {
         inputString = ""
+        deleteButton.setTitle(cancelButtonLocalizedTitle, for: .normal)
     }
     
     //MARK: IBAction
     @IBAction func deleteInputString(_ sender: AnyObject) {
+        if inputString.count == 0 {
+            self.delegate?.cancelPressed()
+            return
+        }
         #if swift(>=3.2)
             guard inputString.count > 0 && !passwordDotView.isFull else {
                 return
@@ -175,10 +183,13 @@ open class PasswordContainerView: UIView {
             inputString = String(inputString.dropLast())
         #else
             guard inputString.characters.count > 0 && !passwordDotView.isFull else {
-            return
+                return
             }
             inputString = String(inputString.characters.dropLast())
         #endif
+        if inputString.count == 0 {
+            deleteButton.setTitle(cancelButtonLocalizedTitle, for: .normal)
+        }
     }
     
     @IBAction func touchAuthenticationAction(_ sender: UIButton) {
@@ -290,5 +301,6 @@ extension PasswordContainerView: PasswordInputViewTappedProtocol {
         #endif
 
         inputString += tappedString
+        self.deleteButton.setTitle(deleteButtonLocalizedTitle, for: .normal)
     }
 }

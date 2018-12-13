@@ -31,10 +31,15 @@ class BlurPasswordLoginViewController: UIViewController {
             print("*️⃣ failure!")
         }
         
+        passwordUIValidation.cancel = {
+            self.dismiss(animated: true, completion: nil)
+        }
+        
         //visual effect password UI
         passwordUIValidation.view.rearrangeForVisualEffectView(in: self)
         
         passwordUIValidation.view.deleteButtonLocalizedTitle = "smilelock_delete"
+        passwordUIValidation.view.cancelButtonLocalizedTitle = "cancel"
         
         // customize font
 //        for inputView in passwordUIValidation.view.passwordInputViews {

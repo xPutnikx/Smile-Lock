@@ -7,11 +7,13 @@
 
 open class PasswordUIValidation<T>: PasswordInputCompleteProtocol {
     public typealias Failure    = () -> Void
+    public typealias Cancel     = () -> Void
     public typealias Success    = (T) -> Void
     public typealias Validation = (String) -> T?
     
     open var failure: Failure?
     open var success: Success?
+    open var cancel: Cancel?
     
     open var validation: Validation?
     
@@ -39,4 +41,8 @@ open class PasswordUIValidation<T>: PasswordInputCompleteProtocol {
     }
     
     open func touchAuthenticationComplete(_ passwordContainerView: PasswordContainerView, success: Bool, error: Error?) {}
+    
+    open func cancelPressed() {
+        cancel?()
+    }
 }
